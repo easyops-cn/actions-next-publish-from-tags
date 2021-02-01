@@ -11,7 +11,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-  - run: git fetch --depth=1 origin "refs/tags/*:refs/tags/*"
+  - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* || echo 'no tags.'
     shell: bash
   
   - name: Check tags
@@ -24,6 +24,8 @@ runs:
     run: |
       if [[ "_$(git tag --points-at HEAD)" != '_' ]]; then
         npx lerna publish from-git --dist-tag latest --yes
+      else
+        echo 'no tags at HEAD.'
       fi
     shell: bash
     env:
