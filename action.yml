@@ -1,0 +1,25 @@
+name: Publish from tags
+description: 'GitHub Actions: publish from tags for Brick Next repositories'
+inputs:
+  npm-token:
+    description: 'NPM token for publishing'
+    required: true
+outputs:
+  has-tags:
+    description: "Whether the HEAD commit has tags"
+    value: ${{ steps.check-tags.outputs.has-tags }}
+runs:
+  using: "composite"
+  steps:
+  - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+  
+  - name: Check tags
+    id: check-tags
+    run: |
+      echo "::set-output name=has-tags::$(git tag --points-at HEAD)"
+
+  - name: Lerna Publish
+    run: npx lerna publish from-git --dist-tag latest --yes
+    env:
+      NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+    if: steps.check-tags.outputs.has-tags != ''
