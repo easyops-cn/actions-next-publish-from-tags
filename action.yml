@@ -12,14 +12,19 @@ runs:
   using: "composite"
   steps:
   - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    shell: bash
   
   - name: Check tags
     id: check-tags
     run: |
       echo "::set-output name=has-tags::$(git tag --points-at HEAD)"
+    shell: bash
 
   - name: Lerna Publish
-    run: npx lerna publish from-git --dist-tag latest --yes
+    run: |
+      if [[ "_$(git tag --points-at HEAD)" != '_' ]]; then
+        npx lerna publish from-git --dist-tag latest --yes
+      fi
+    shell: bash
     env:
       NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
-    if: steps.check-tags.outputs.has-tags != ''
