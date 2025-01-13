@@ -4,6 +4,9 @@ inputs:
   npm-token:
     description: 'NPM token for publishing'
     required: true
+  dist-tag:
+    description: NPM dist tag
+    default: latest
 outputs:
   has-tags:
     description: "Whether the HEAD commit has tags"
@@ -23,7 +26,7 @@ runs:
   - name: Lerna Publish
     run: |
       if [[ "_$(git tag --points-at HEAD)" != '_' ]]; then
-        npx lerna@6 publish from-git --dist-tag latest --pre-dist-tag next --yes
+        npx lerna@6 publish from-git --dist-tag ${{ inputs.dist-tag }} --pre-dist-tag next --yes
       else
         echo 'no tags at HEAD.'
       fi
