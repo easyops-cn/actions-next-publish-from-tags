@@ -26,7 +26,7 @@ runs:
   - name: Lerna Publish
     run: |
       if [[ "_$(git tag --points-at HEAD)" != '_' ]]; then
-        npx lerna@6 publish from-git --dist-tag ${{ inputs.dist-tag }} --pre-dist-tag next --yes
+        npx lerna@6 publish from-git --dist-tag ${{ inputs.dist-tag }} --pre-dist-tag canary --yes
       else
         echo 'no tags at HEAD.'
       fi
